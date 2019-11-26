@@ -8,11 +8,11 @@ class ProgressBar extends Component {
     componentDidMount() {
         this.intervalID = setInterval( () =>{
             if(this.state.width > 0) {
-                this.setState({width: this.state.width - 10})
+                this.setState({width: this.state.width - 1})
             } else {
                 clearInterval(this.intervalID)
             }
-        },500)
+        },50)
     }
     componentWillUnmount() {
         clearInterval(this.intervalID)
@@ -45,31 +45,40 @@ class Answer extends Component {
     state = {
         answer: ''
     };
+    handleChange = (e) => {
+        this.setState({answer: e.target.value})
+    };
     render() {
-        return <input type="text" className='answer' value={this.state.answer} name='answer'/>
+        return <input type="text" className='answer' value={this.state.answer} name='answer' onChange={this.handleChange}/>
     }
 }
 
 class Info extends Component {
+    state = {
+        score: 0,
+        level: 1
+    };
     render() {
         return (
             <div className='score'>
-                <h1>Score:</h1>
-                <h1>Level:</h1>
+                <h1>Score: {this.state.score}</h1>
+                <h1>Level: {this.state.level}</h1>
             </div>
         )
     }
 }
 
-function App() {
-  return (
-    <div className="App">
-      <ProgressBar />
-      <Operation />
-      <Answer />
-      <Info />
-    </div>
-  );
+class App extends Component {
+  render() {
+      return (
+          <div className="App">
+              <ProgressBar />
+              <Operation />
+              <Answer />
+              <Info />
+          </div>
+      )
+  }
 }
 
 export default App;
