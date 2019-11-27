@@ -18,7 +18,7 @@ class GameOver extends Component {
         window.location.reload();
     };
     render() {
-        return <div className='game-over'><h1>GAME OVER</h1><h2>HA!</h2><h2>HA!</h2><h2>HA!</h2><button onClick={this.refresh}>AGAIN!</button></div>
+        return <div className='game-over'><h1>GAME OVER</h1><h2>Your score: {this.props.score}</h2><button onClick={this.refresh}>AGAIN!</button></div>
     }
 }
 
@@ -53,7 +53,7 @@ class Answer extends Component {
         this.input.focus();
     }
     render() {
-        return <input type="text" className='answer' name='answer' value={this.props.zeroInput} onChange={this.handleChange} ref={element => this.input = element}/>
+        return <input type="number" autoComplete='off' className='answer' name='answer' value={this.props.zeroInput} onChange={this.handleChange} ref={element => this.input = element}/>
     }
 }
 
@@ -130,6 +130,7 @@ class Game extends Component {
 
 
         } else {
+            this.props.score(this.state.score);
             this.props.gameover()
         }
     };
@@ -147,6 +148,7 @@ class Game extends Component {
 
 class App extends Component {
     state = {
+        score: 0,
         welcomeWindow: true,
         countingWindow: false,
         appWindow: false,
@@ -168,12 +170,15 @@ class App extends Component {
             gameOver: true
         })
     };
+    setScore = (score) => {
+        this.setState({score: score})
+    };
     render() {
         return (
           <div className="App">
               {this.state.welcomeWindow && <WelcomeWindow close={this.readyToGame}/>}
-              {this.state.appWindow && <Game gameover={this.gameOver}/>}
-              {this.state.gameOver && <GameOver />}
+              {this.state.appWindow && <Game gameover={this.gameOver} score={this.setScore}/>}
+              {this.state.gameOver && <GameOver score={this.state.score}/>}
           </div>
         )
     }
