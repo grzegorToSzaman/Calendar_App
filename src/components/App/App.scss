@@ -1,6 +1,7 @@
 .App {
   height: 80vh;
   width: 40vw;
+  min-width: 240px;
   border: 3px solid white;
   border-radius: 15px;
   display: flex;
@@ -21,6 +22,7 @@
   border-radius: 15px;
   text-align: center;
   line-height: 5rem;
+  font-size: 3rem;
 }
 .answer {
   height: 3rem;
@@ -41,6 +43,14 @@
   border: 2px solid white;
   border-radius: 15px;
   padding: 10px;
+}
+@media screen and (max-width: 800px) {
+  .score {
+    position: relative;
+    right: 0;
+    top: 0;
+    margin: 0 auto;
+  }
 }
 @keyframes changeBackground {
   0% {
@@ -64,11 +74,14 @@
   background-color: red;
   border-radius: 15px;
   h1:first-child {
+    text-align: center;
+    padding: 2%;
     background-color: white;
+    border-radius: 15px;
   }
   button {
     height: 10%;
-    width: 40%;
+    width: 60%;
     font-size: 2rem;
     font-weight: bold;
     letter-spacing: 2px;
@@ -110,4 +123,9 @@
       animation: changeBackground 2s infinite alternate;
     }
   }
+}
+input {
+  background-color: yellow;
+  text-align: center;
+  font-size: 2.5rem;
 }

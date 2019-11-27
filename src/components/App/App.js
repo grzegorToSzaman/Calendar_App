@@ -6,7 +6,7 @@ class WelcomeWindow extends Component {
         return(
             <div className='welcome'>
                 <h1>HELLO!</h1>
-                <h2>Are You ready for some maths?</h2>
+                <h2>Are You ready for some math?</h2>
                 <button onClick={this.props.close}>YES!</button>
             </div>
         )
@@ -18,7 +18,7 @@ class GameOver extends Component {
         window.location.reload();
     };
     render() {
-        return <div className='game-over'><h1>GAME OVER</h1><h1>HA!</h1><h1>HA!</h1><h1>HA!</h1><button onClick={this.refresh}>AGAIN!</button></div>
+        return <div className='game-over'><h1>GAME OVER</h1><h2>HA!</h2><h2>HA!</h2><h2>HA!</h2><button onClick={this.refresh}>AGAIN!</button></div>
     }
 }
 
