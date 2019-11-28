@@ -5,8 +5,7 @@ import Fade from 'react-reveal/Fade';
 import Flash from 'react-reveal/Flash';
 import Pulse from 'react-reveal/Pulse';
 import Jump from 'react-reveal/Jump';
-import Rotate from 'react-reveal/Rotate';
-import Reveal from 'react-reveal/Reveal';
+
 
 
 class WelcomeWindow extends Component {
@@ -20,13 +19,31 @@ class WelcomeWindow extends Component {
     componentWillUnmount() {
         document.removeEventListener('keydown', this.keyDown);
     }
+    changeName = (e) => {
+        this.props.userName(e.target.value)
+    };
 
     render() {
         return(
             <div className='welcome'>
                 <Zoom top delay={0}><h1>HELLO!</h1></Zoom>
                 <Zoom delay={300} top><h2>Are You ready for some math?</h2></Zoom>
+                <Zoom delay={450} top><input onChange={this.changeName}/></Zoom>
                 <Zoom delay={600} top><button onClick={this.props.close}>YES!</button></Zoom>
+            </div>
+        )
+    }
+}
+
+class Test extends Component {
+    render() {
+        return(
+            <div>
+                {this.props.bestScore.map(player => {
+                    return(
+                        <div key={player.id}>{player.name} {player.score}</div>
+                    )
+                })}
             </div>
         )
     }
@@ -55,6 +72,7 @@ class GameOver extends Component {
                 <Jump delay={1000}>
                     <h1>Your score: {this.props.score}</h1>
                 </Jump>
+                <Test bestScore={this.props.bestScores}/>
                 <Pulse delay={2000} count={3}>
                     <button onClick={this.refresh}>AGAIN!</button>
                 </Pulse>
@@ -132,11 +150,19 @@ class Game extends Component {
         correctAnswer: '',
         width: 0,
         a: 0,
-        b: 0
+        b: 0,
+        bestScores: []
     };
     componentDidMount() {
         this.startInterval();
         this.randomNumber();
+        const apiURL = 'http://localhost:3010/bestScores';
+        fetch(apiURL)
+            .then(r => r.json())
+            .then(r => {
+                this.setState({bestScores: r});
+            })
+            .catch()
     }
     randomNumber = () => {
         let c = Math.round(Math.random()*(this.state.level * 10));
@@ -189,8 +215,54 @@ class Game extends Component {
 
         } else {
             this.props.score(this.state.score);
-            this.props.gameover()
+            this.props.gameover();
+            // tutaj por wynikow
+            this.checkScore();
+
+
         }
+    };
+    checkScore = () => {
+        let bestScores = [...this.state.bestScores];
+        const userScore = this.state.score;
+        const userName = this.props.userName;
+        const apiURL = 'http://localhost:3010/bestScores/';
+        const newFetch = (number, name, score) => {
+
+            fetch(apiURL + number, {
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                method:"PUT",
+                body:JSON.stringify({name: name, score: score})
+            }).then(r=>{
+                console.log(r)
+            }).catch(err=>{
+                console.warn(err)
+            })
+        };
+
+
+        if (userScore > bestScores[0].score) {
+            bestScores[0].score = userScore;
+            bestScores[0].name = userName;
+            newFetch(1, userName, userScore);
+        } else if (userScore > bestScores[1].score) {
+            bestScores[1].score = userScore;
+            bestScores[1].name = userName;
+            newFetch(2, userName, userScore);
+        } else if (userScore > bestScores[2].score) {
+            bestScores[2].score = userScore;
+            bestScores[2].name = userName;
+            newFetch(3,userName, userScore);
+        }else{
+            console.log("spadaj na drzewo")
+        }
+        this.props.highScores(this.state.bestScores);
+
+
+
+
     };
     componentWillUnmount() {
         clearInterval(this.intervalID);
@@ -215,6 +287,8 @@ class App extends Component {
         countingWindow: false,
         appWindow: false,
         gameOver: false,
+        userName: '',
+        bestScores: [],
 
     };
 
@@ -236,12 +310,18 @@ class App extends Component {
     setScore = (score) => {
         this.setState({score: score})
     };
+    changeName = name => {
+        this.setState({userName: name})
+    };
+    changeBestScores = (scores) => {
+        this.setState({bestScores: scores})
+    };
     render() {
         return (
           <div className="App">
-              {this.state.welcomeWindow && <WelcomeWindow close={this.readyToGame}/>}
-              {this.state.appWindow && <Game gameover={this.gameOver} score={this.setScore}/>}
-              {this.state.gameOver && <GameOver score={this.state.score} ready={this.readyToGame}/>}
+              {this.state.welcomeWindow && <WelcomeWindow close={this.readyToGame} userName={this.changeName}/>}
+              {this.state.appWindow && <Game gameover={this.gameOver} score={this.setScore} userName={this.state.userName} highScores={this.changeBestScores}/>}
+              {this.state.gameOver && <GameOver score={this.state.score} ready={this.readyToGame} bestScores={this.state.bestScores}/>}
           </div>
         )
     }
