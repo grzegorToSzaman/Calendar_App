@@ -5,6 +5,9 @@ import Fade from 'react-reveal/Fade';
 import Flash from 'react-reveal/Flash';
 import Pulse from 'react-reveal/Pulse';
 import Jump from 'react-reveal/Jump';
+import Rotate from 'react-reveal/Rotate';
+import Reveal from 'react-reveal/Reveal';
+
 
 class WelcomeWindow extends Component {
     keyDown = e => {
@@ -15,7 +18,7 @@ class WelcomeWindow extends Component {
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.keyDown)
+        document.removeEventListener('keydown', this.keyDown);
     }
 
     render() {
@@ -23,9 +26,7 @@ class WelcomeWindow extends Component {
             <div className='welcome'>
                 <Zoom top delay={0}><h1>HELLO!</h1></Zoom>
                 <Zoom delay={300} top><h2>Are You ready for some math?</h2></Zoom>
-                <Zoom delay={600} top>
-                    <button onClick={this.props.close}>YES!</button>
-                </Zoom>
+                <Zoom delay={600} top><button onClick={this.props.close}>YES!</button></Zoom>
             </div>
         )
     }
@@ -43,7 +44,7 @@ class GameOver extends Component {
         document.removeEventListener('keydown', this.keyDown)
     }
     refresh = () => {
-        window.location.reload();
+        this.props.ready();
     };
     render() {
         return (
@@ -169,13 +170,15 @@ class Game extends Component {
     checkAnswer = () => {
         if (this.state.answer == this.state.correctAnswer) {
 
+            clearInterval(this.intervalID);
+
             this.setState({
                 score: this.state.score + 1,
                 answer: ''
             });
 
             if (this.state.score === 0) {
-                this.setState({level: 0});
+                this.setState({level: 1});
             } else {
                 this.setState({level: Math.ceil(this.state.score / 5)});
             }
@@ -189,6 +192,10 @@ class Game extends Component {
             this.props.gameover()
         }
     };
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
+    }
+
     render() {
         return(
             <>
@@ -214,7 +221,8 @@ class App extends Component {
     readyToGame = () => {
         this.setState({
             welcomeWindow: false,
-            appWindow: true
+            appWindow: true,
+            gameOver: false
 
         })
     };
@@ -233,7 +241,7 @@ class App extends Component {
           <div className="App">
               {this.state.welcomeWindow && <WelcomeWindow close={this.readyToGame}/>}
               {this.state.appWindow && <Game gameover={this.gameOver} score={this.setScore}/>}
-              {this.state.gameOver && <GameOver score={this.state.score}/>}
+              {this.state.gameOver && <GameOver score={this.state.score} ready={this.readyToGame}/>}
           </div>
         )
     }
