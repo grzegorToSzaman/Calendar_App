@@ -43,6 +43,7 @@
   border: 2px solid white;
   border-radius: 15px;
   padding: 10px;
+  overflow: hidden;
 }
 @media screen and (max-width: 800px) {
   .score {
@@ -89,9 +90,14 @@
     background-color: #bada55;
     border: none;
     border-radius: 15px;
+    cursor: pointer;
     &:hover {
-      animation: changeBackground 2s infinite alternate;
+      background-color: darkmagenta;
+      color: white;
+      transform: scale(1.2);
+      transition: 2s;
     }
+
   }
 }
 .welcome {
@@ -119,8 +125,13 @@
     background-color: #bada55;
     border: none;
     border-radius: 15px;
+    cursor: pointer;
+    transform: scale(1.2);
+
     &:hover {
-      animation: changeBackground 2s infinite alternate;
+      background-color: darkmagenta;
+      color: white;
+      transition: 2s;
     }
   }
 }
