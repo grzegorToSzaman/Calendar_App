@@ -1,0 +1,19 @@
+{
+  "bestScores": [
+    {
+      "name": "Lisowski",
+      "score": 26,
+      "id": 1
+    },
+    {
+      "name": "jarek",
+      "score": 22,
+      "id": 2
+    },
+    {
+      "name": "Jacko",
+      "score": 18,
+      "id": 3
+    }
+  ]
+}

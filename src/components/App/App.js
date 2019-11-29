@@ -13,6 +13,7 @@ class WelcomeWindow extends Component {
         e.key === 'Enter' && this.props.close()
     };
     componentDidMount() {
+        this.input.focus();
         document.addEventListener('keydown', this.keyDown)
     }
 
@@ -27,8 +28,9 @@ class WelcomeWindow extends Component {
         return(
             <div className='welcome'>
                 <Zoom top delay={0}><h1>HELLO!</h1></Zoom>
-                <Zoom delay={300} top><h2>Are You ready for some math?</h2></Zoom>
-                <Zoom delay={450} top><input onChange={this.changeName}/></Zoom>
+                <Zoom delay={200} top><h2>Are You ready for some math?</h2></Zoom>
+                <Zoom top delay={300}><h4>Your name:</h4></Zoom>
+                <Zoom delay={450} top><input onChange={this.changeName} ref={element => this.input = element} defaultValue='GallAnonim'/></Zoom>
                 <Zoom delay={600} top><button onClick={this.props.close}>YES!</button></Zoom>
             </div>
         )
@@ -162,7 +164,9 @@ class Game extends Component {
             .then(r => {
                 this.setState({bestScores: r});
             })
-            .catch()
+            .catch(err => {
+                console.warn(err);
+            })
     }
     randomNumber = () => {
         let c = Math.round(Math.random()*(this.state.level * 10));
@@ -227,14 +231,14 @@ class Game extends Component {
         const userScore = this.state.score;
         const userName = this.props.userName;
         const apiURL = 'http://localhost:3010/bestScores/';
-        const newFetch = (number, name, score) => {
+        const newFetch = (number) => {
 
             fetch(apiURL + number, {
                 headers:{
                     "Content-Type": "application/json"
                 },
                 method:"PUT",
-                body:JSON.stringify({name: name, score: score})
+                body:JSON.stringify({name: userName, score: userScore})
             }).then(r=>{
                 console.log(r)
             }).catch(err=>{
@@ -242,26 +246,26 @@ class Game extends Component {
             })
         };
 
-
-        if (userScore > bestScores[0].score) {
-            bestScores[0].score = userScore;
-            bestScores[0].name = userName;
-            newFetch(1, userName, userScore);
-        } else if (userScore > bestScores[1].score) {
-            bestScores[1].score = userScore;
-            bestScores[1].name = userName;
-            newFetch(2, userName, userScore);
-        } else if (userScore > bestScores[2].score) {
-            bestScores[2].score = userScore;
-            bestScores[2].name = userName;
-            newFetch(3,userName, userScore);
-        }else{
-            console.log("spadaj na drzewo")
+        if (this.state.bestScores.length === 0) {
+            return null
+        } else {
+            if (userScore > bestScores[0].score) {
+                bestScores[0].score = userScore;
+                bestScores[0].name = userName;
+                newFetch(1);
+            } else if (userScore > bestScores[1].score) {
+                bestScores[1].score = userScore;
+                bestScores[1].name = userName;
+                newFetch(2);
+            } else if (userScore > bestScores[2].score) {
+                bestScores[2].score = userScore;
+                bestScores[2].name = userName;
+                newFetch(3);
+            }else{
+                console.log("spadaj na drzewo")
+            }
+            this.props.highScores(this.state.bestScores);
         }
-        this.props.highScores(this.state.bestScores);
-
-
-
 
     };
     componentWillUnmount() {
