@@ -43,7 +43,7 @@ class Test extends Component {
             <div>
                 {this.props.bestScore.map(player => {
                     return(
-                        <div key={player.id}>{player.name} {player.score}</div>
+                        <div className='high-scores' key={player.id}>{player.name} {player.score}</div>
                     )
                 })}
             </div>
@@ -158,7 +158,7 @@ class Game extends Component {
     componentDidMount() {
         this.startInterval();
         this.randomNumber();
-        const apiURL = 'http://localhost:3010/bestScores';
+        const apiURL = 'http://localhost:3010/bestScores/';
         fetch(apiURL)
             .then(r => r.json())
             .then(r => {
@@ -291,7 +291,7 @@ class App extends Component {
         countingWindow: false,
         appWindow: false,
         gameOver: false,
-        userName: '',
+        userName: 'GallAnonim',
         bestScores: [],
 
     };
