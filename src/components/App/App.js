@@ -72,9 +72,9 @@ class GameOver extends Component {
                     <h1>GAME OVER</h1>
                 </Flash>
                 <Jump delay={1000}>
-                    <h1>Your score: {this.props.score}</h1>
+                    <h2>Your score: {this.props.score}</h2>
                 </Jump>
-                <Test bestScore={this.props.bestScores}/>
+                {this.props.bestScores.length === 0 ? null : <Test bestScore={this.props.bestScores}/>}
                 <Pulse delay={2000} count={3}>
                     <button onClick={this.refresh}>AGAIN!</button>
                 </Pulse>
@@ -117,16 +117,20 @@ class Answer extends Component {
         this.input.focus();
     }
     render() {
-        return <input
-            type="number"
-            autoComplete='off'
-            className='answer'
-            name='answer'
-            value={this.props.zeroInput}
-            onChange={this.handleChange}
-            ref={element => this.input = element}
-            onKeyDown={this.handleEnter}
-        />
+        return (
+            <div style={{textAlign: 'center'}}>
+                <input
+                    type="number"
+                    autoComplete='off'
+                    className='answer'
+                    name='answer'
+                    value={this.props.zeroInput}
+                    onChange={this.handleChange}
+                    ref={element => this.input = element}
+                    onKeyDown={this.handleEnter}
+                />
+            </div>
+        )
     }
 }
 
@@ -189,7 +193,7 @@ class Game extends Component {
                 clearInterval(this.intervalID);
                 this.checkAnswer();
             }
-        },30)
+        },10000)
     };
     changeAnswer = answer => {
         this.setState({answer: answer})
@@ -205,13 +209,10 @@ class Game extends Component {
             this.setState({
                 score: this.state.score + 1,
                 answer: ''
+            }, () => {
+                this.setState({level: Math.ceil(this.state.score / 5)});
             });
 
-            if (this.state.score === 0) {
-                this.setState({level: 1});
-            } else {
-                this.setState({level: Math.ceil(this.state.score / 5)});
-            }
 
             this.startInterval();
             this.randomNumber();
@@ -220,8 +221,8 @@ class Game extends Component {
         } else {
             this.props.score(this.state.score);
             this.props.gameover();
-            // tutaj por wynikow
-            this.checkScore();
+
+            this.state.bestScores.length !== 0 && this.checkScore()
 
 
         }
@@ -274,12 +275,12 @@ class Game extends Component {
 
     render() {
         return(
-            <>
+            <div className='game'>
                 <ProgressBar width={this.state.width}/>
                 <Operation a={this.state.a} b={this.state.b}/>
                 <Answer answer={this.changeAnswer} zeroInput={this.state.answer} enter={this.checkAnswer}/>
                 <Info score={this.state.score} level={this.state.level}/>
-            </>
+            </div>
         )
     }
 }
