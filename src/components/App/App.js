@@ -86,7 +86,8 @@ class GameOver extends Component {
 class ProgressBar extends Component {
     render() {
         const spanStyle = {
-            width: this.props.width + '%'
+            width: this.props.width + '%',
+            borderRadius: '15px'
         };
         return(
             <div className='bar'>
@@ -160,8 +161,10 @@ class Game extends Component {
         bestScores: []
     };
     componentDidMount() {
-        this.startInterval();
         this.randomNumber();
+
+        this.startInterval();
+
         const apiURL = 'http://localhost:3010/bestScores/';
         fetch(apiURL)
             .then(r => r.json())
@@ -210,12 +213,14 @@ class Game extends Component {
                 score: this.state.score + 1,
                 answer: ''
             }, () => {
-                this.setState({level: Math.ceil(this.state.score / 5)});
+                this.setState({level: Math.ceil(this.state.score / 5)}, () => {
+                    this.randomNumber();
+                });
             });
 
 
             this.startInterval();
-            this.randomNumber();
+
 
 
         } else {
