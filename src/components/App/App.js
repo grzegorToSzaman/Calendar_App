@@ -193,7 +193,7 @@ class Game extends Component {
                 clearInterval(this.intervalID);
                 this.checkAnswer();
             }
-        },10000)
+        },30)
     };
     changeAnswer = answer => {
         this.setState({answer: answer})
